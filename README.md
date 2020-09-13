@@ -1,11 +1,13 @@
+```
   ___                 __  __           
  |_ _|_ __ ___   __ _|  \/  |___  __ _ 
   | || '_ ` _ \ / _` | |\/| / __|/ _` |
   | || | | | | | (_| | |  | \__ \ (_| |
  |___|_| |_| |_|\__, |_|  |_|___/\__, |
                 |___/            |___/   v1.2
-
-    by Dimitar Blagoev (Gef[r]ix)
+```
+# Install dev-dependencies
+npm install
 
 # Building for production
 npm run build
