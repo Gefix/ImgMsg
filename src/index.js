@@ -1,4 +1,4 @@
-var imgmsg = ImgMsg('webgl', 'w', 'i', 'm', 'p', 'msgimgpb', 'imgmsgpb', 120, -51);
+var imgmsg = ImgMsg('webgl', 'w', 'i', 'm', 'p', 'msgimgpb', 'imgmsgpb', 120, -51, 'opt_ecc', 'opt_gn');
 
 (_ => {
     const image = document.getElementById('i');

@@ -156,7 +156,7 @@ var ImgMsgCodec = function (encodeProgressUpdate, decodeProgressUpdate) {
     }
 
     const ImgMsgCodec = {
-        encode: async function (img, msg, pwd, type = "13") {
+        encode: async function (img, msg, pwd, type = "12") {
             await encodeProgressUpdate(0.1);
 
             const width = img.width;
@@ -336,7 +336,7 @@ var ImgMsgCodec = function (encodeProgressUpdate, decodeProgressUpdate) {
                 throw "Could not decode";
             }
 
-            return msg;
+            return [msg, type];
         }
     }
 

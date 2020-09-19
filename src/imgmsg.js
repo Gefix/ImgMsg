@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-var ImgMsg = function (webglId, canvasId, imageId, messageId, passwordId, encodePbId, decodePbId, pbHeight, pbTop) {
+var ImgMsg = function (webglId, canvasId, imageId, messageId, passwordId, encodePbId, decodePbId, pbHeight, pbTop, optECCId, optGNId) {
     const maxDim = 1024;
 
     const webgl = document.getElementById(webglId);
@@ -28,6 +28,8 @@ var ImgMsg = function (webglId, canvasId, imageId, messageId, passwordId, encode
     const password = document.getElementById(passwordId);
     const encodePb = document.getElementById(encodePbId);
     const decodePb = document.getElementById(decodePbId);
+    const optECC = document.getElementById(optECCId);
+    const optGN = document.getElementById(optGNId);
 
     let firstLoad = true;
 
@@ -206,7 +208,8 @@ var ImgMsg = function (webglId, canvasId, imageId, messageId, passwordId, encode
             img.data.set(new Uint8ClampedArray(logo.data));
 
             try {
-                await codec.encode(img, message.value, password.value);
+                const type = (optECC.checked ? '1' : '0') + (optGN.checked ? '3' : '2');
+                await codec.encode(img, message.value, password.value, type);
                 context.putImageData(img, 0, 0);
                 await encodeProgressUpdate(0.82);
                 transferCanvasToImage();
@@ -233,7 +236,10 @@ var ImgMsg = function (webglId, canvasId, imageId, messageId, passwordId, encode
             img.data.set(new Uint8ClampedArray(logo.data));
 
             try {
-                message.value = await codec.decode(img, password.value)
+                const [msg, opts] = await codec.decode(img, password.value)
+                message.value = msg;
+                optECC.checked = opts[0] == '1';
+                optGN.checked = opts[1] == '3';
             } catch (err) {
                 message.value = "Incorrect password or image.";
             } finally {

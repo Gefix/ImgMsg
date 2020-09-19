@@ -82,7 +82,16 @@
                             onclick="imgmsg.encode()">▲<br />Encode<br />▲<br />Message</button>
                     </div>
                     <div class="pad16"></div>
-                    <br />
+                    <div class="opt">
+                        <span
+                            title="Use G24 Golay ECC:&#10;Halves the capacity&#10;More messages can be encoded in one image">
+                            <input type="checkbox" id="opt_ecc" checked /><label for="opt_ecc">ECC</label>
+                        </span>
+                        &nbsp;
+                        <span title="Use Gaussian-like noise:&#10;Halves the capacity&#10;Reduces quantization effect">
+                            <input type="checkbox" id="opt_gn" /><label for="opt_gn">GN</label>
+                        </span>
+                    </div>
                     <br />
                 </form>
                 <span id="msglbl" class="label">message:</span><br />
