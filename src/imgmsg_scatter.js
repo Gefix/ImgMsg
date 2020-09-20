@@ -116,10 +116,10 @@ var ImgMsgScatter = function (headerSize) {
         // :
         // Due to the way Fisher-Yates works, for each shuffled (taken) bit,
         // one bit from the end is put in its place.
-        // In TypeU arrangement, this is always a layer-4 bit (bit sequence is L1,L2,L3,L4).
+        // For the TypeU header, this is always a layer-4 bit (bit sequence is L1,L2,L3,L4).
         // If the available pixels are low the 264 bits used already by the TypeU shuffler for
         // the header may result in a significant amount of layer-4 bits present in all other layers.
-        // In extreme case of 16 x 16 this results in more layer-4 pixels in the final distribution than layer-3.
+        // In the extreme case of < 16 x 16 this results in more layer-4 bits being used than layer-3.
 
         if (bits_per_layer < (1 << 14) * 3) {
             const layer_size = width * height * 3;
