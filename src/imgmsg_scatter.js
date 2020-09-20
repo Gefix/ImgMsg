@@ -101,7 +101,7 @@ var ImgMsgScatter = function (headerSize) {
         }
     }
 
-    function bitShufflerTypeGfromTypeU(rng, gather, shuffler) {
+    function bitShufflerTypeGfromTypeU(rng, gather, shuffler, width, height) {
         let total_used = shuffler.used();
         let last_pos = shuffler.pos();
 
@@ -110,8 +110,41 @@ var ImgMsgScatter = function (headerSize) {
 
         const buckets = [];
 
+        const left_bits_per_layer = bits_per_layer - used_per_layer;
+
+        // If the available number of pixels is less than 128 x 128 we will sort the remaining lot.
+        // :
+        // Due to the way Fisher-Yates works, for each shuffled (taken) bit,
+        // one bit from the end is put in its place.
+        // In TypeU arrangement, this is always a layer-4 bit (bit sequence is L1,L2,L3,L4).
+        // If the available pixels are low the 264 bits used already by the TypeU shuffler for
+        // the header may result in a significant amount of layer-4 bits present in all other layers.
+        // In extreme case of 16 x 16 this results in more layer-4 pixels in the final distribution than layer-3.
+
+        if (bits_per_layer < (1 << 14) * 3) {
+            const layer_size = width * height * 3;
+            const window_size = left_bits_per_layer * 4;
+
+            const radix_counts = new Uint32Array(4);
+            const radix = gather.slice();
+
+            for (let i = 0; i < window_size; i++) {
+                radix_counts[gather[i] / layer_size | 0]++;
+            }
+
+            for (let i = 3; i > 0; i--) {
+                radix_counts[i - 1] += radix_counts[i];
+            }
+
+            for (let i = 0; i < window_size; i++) {
+                radix[window_size - (radix_counts[gather[i] / layer_size | 0]--)] = gather[i];
+            }
+
+            gather = radix;
+        }
+
         for (let i = 0; i < 4; i++) {
-            buckets[i] = gather.subarray((bits_per_layer - used_per_layer) * i, (bits_per_layer - used_per_layer) * (i + 1));
+            buckets[i] = gather.subarray(left_bits_per_layer * i, left_bits_per_layer * (i + 1));
         }
 
         const bucket_size = buckets[0].length;
@@ -206,7 +239,7 @@ var ImgMsgScatter = function (headerSize) {
 
             if (scatterType != prev_t) {
                 if (prev_t == SCATTER_TYPE_U && scatterType == SCATTER_TYPE_G) {
-                    shuffler = bitShufflerTypeGfromTypeU(rng, gather, shuffler);
+                    shuffler = bitShufflerTypeGfromTypeU(rng, gather, shuffler, width, height);
                 } else {
                     throw "Cannot switch to new type from current"
                 }
