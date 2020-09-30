@@ -6,6 +6,10 @@
  |___|_| |_| |_|\__, |_|  |_|___/\__, |
                 |___/            |___/   v1.2
 ```
+
+# Live demo at
+https://imgmsg.com/
+
 # Install dev-dependencies
 npm install
 
